@@ -34,14 +34,14 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 					return
 			}
 	}
-	json.NewEncoder(w).Encode(&Book{})
+	json.NewEncoder(w).Encode(&model.Book{})
 }
 
 // Create a Book
 func createBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var book Book
+	var book model.Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
 	book.ID = strconv.Itoa(rand.Intn(10000)) // Mock ID - not safe in production
 	books = append(books, book)
@@ -57,7 +57,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	for index, item := range books {
 			if item.ID == params["id"] {
 					books = append(books[:index], books[index+1:]...)
-					var book Book
+					var book model.Book
 					_ = json.NewDecoder(r.Body).Decode(&book)
 					book.ID = params["id"]
 					books = append(books, book)
@@ -87,8 +87,9 @@ func main() {
     // ルーターのイニシャライズ
     r := mux.NewRouter()
 
-		books = append(books, Book{ID: "1", Title: "Book one", Author: &Author{FirstName: "Philip", LastName: "Williams"}})
-    books = append(books, Book{ID: "2", Title: "Book Two", Author: &Author{FirstName: "John", LastName: "Johnson"}})
+		books = append(books, model.Book{ID: "1", Title: "Book one",
+		 Author: model.Author{FirstName: "Philip", LastName: "Williams"}})
+    books = append(books, model.Book{ID: "2", Title: "Book Two", Author: model.Author{FirstName: "John", LastName: "Johnson"}})
 
     // ルート(エンドポイント)
     r.HandleFunc("/api/books", getBooks).Methods("GET")
