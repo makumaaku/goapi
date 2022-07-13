@@ -1,11 +1,15 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/gorilla/mux"
 	"github.com/makumaaku/goapi/model"
@@ -86,6 +90,35 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 func main() {
     // ルーターのイニシャライズ
     r := mux.NewRouter()
+
+		//第一引数 => 
+		dsn := "root:mark1015@/mysqltry"
+		db, err := sql.Open("mysql", dsn)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		err = db.Ping()
+		  if err != nil {
+        fmt.Println("データベース接続失敗")
+        return
+    } else {
+        fmt.Println("データベース接続成功")
+    }
+
+
+
+rows, err := db.Query("SELECT * FROM users") // 
+  if err != nil {
+    panic(err.Error())
+  }
+
+
+		fmt.Println(rows)
+		
+		defer db.Close() // 関数がリターンする直前に呼び出される
+
+
 
 		books = append(books, model.Book{ID: "1", Title: "Book one",
 		 Author: model.Author{FirstName: "Philip", LastName: "Williams"}})
